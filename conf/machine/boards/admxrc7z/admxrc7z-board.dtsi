@@ -1,0 +1,133 @@
+/*
+ * ADMXRC7Z1 DTS file header for generic boot.
+ */
+
+/ {
+	model = "Xilinx Zynq";
+	chosen {
+		bootargs = "console=ttyPS0,115200 earlyprintk root=/dev/ram rw";
+		linux,stdout-path = "/amba@0/serial@e0001000";
+	} ;
+	aliases {
+		ethernet0 = &ps7_ethernet_0;
+		serial0 = &ps7_uart_1;
+        spi0 = &ps7_qspi_0;
+	} ;
+
+	cpus {
+		ps7_cortexa9_0: cpu@0 {
+            cpu-supply = <&regulator_vccpint>;    
+        } ;
+    } ;
+	ps7_ddr_0: memory@0 {
+		device_type = "memory";
+		reg = <0x0 0x20000000>;
+	} ;
+    regulator_vccpint: fixedregulator@0 {
+        compatible = "regulator-fixed";
+        regulator-name = "VCCPINT";
+        regulator-min-microvolt = <1000000>;
+        regulator-max-microvolt = <1000000>;
+        regulator-boot-on;
+        regulator-always-on;
+    } ;
+	ps7_axi_interconnect_0: amba@0 {
+    
+		ps7_clockc_0: ps7-clockc@0 {
+			compatible = "xlnx,ps7-clockc-1.00.a";
+			xlnx,has-modem = <0x0>;
+		} ;
+    
+
+		ps7_ethernet_0: ps7-ethernet@e000b000 {
+			phy-handle = <&phy0>;
+			phy-mode = "rgmii-id";
+			xlnx,eth-mode = <0x1>;
+			xlnx,has-mdio = <0x1>;
+			xlnx,ptp-enet-clock = <83333336>;
+			mdio {
+				#address-cells = <1>;
+				#size-cells = <0>;
+				phy0: phy@1 {
+					compatible = "marvell,88e1112";
+					device_type = "ethernet-phy";
+					reg = <1>;
+				} ;
+			} ;
+		} ;
+
+		ps7_qspi_0: ps7-qspi@e000d000 {
+			is-dual = <0>;
+			num-chip-select = <1>;
+			reg = <0xe000d000 0x1000>;
+			xlnx,fb-clk = <0x1>;
+			xlnx,qspi-mode = <0x1>;
+		} ;
+        
+		ps7_qspi_linear_0: ps7-qspi-linear@fc000000 {
+			clock-names = "ref_clk", "aper_clk";
+			clocks = <&clkc 10>, <&clkc 43>;
+			compatible = "xlnx,ps7-qspi-linear-1.00.a";
+			reg = <0xfc000000 0x2000000>;
+		} ;
+        
+
+		ps7_sd_0: ps7-sdio@e0100000 {
+            non-removable;
+            broken-cd ;
+            wp-inverted;
+			clock-frequency = <50000000>;
+			compatible = "xlnx,ps7-sdio-1.00.a", "arasan,sdhci", "arasan,sdhci-8.9a", "generic-sdhci";
+			xlnx,has-cd = <0x0>;
+			xlnx,has-power = <0x0>;
+			xlnx,has-wp = <0x0>;
+		} ;
+
+		ps7_usb_0: ps7-usb@e0002000 {
+            reg = <0xe0002000 0x1000>;
+		} ;
+
+		ps7_uart_1: serial@e0001000 {
+			clock-names = "ref_clk", "aper_clk";
+			clocks = <&clkc 24>, <&clkc 41>;
+			compatible = "xlnx,ps7-uart-1.00.a", "xlnx,xuartps";
+			current-speed = <115200>;
+			device_type = "serial";
+			interrupt-parent = <&ps7_scugic_0>;
+			interrupts = <0 50 4>;
+			port-number = <0>;
+			reg = <0xe0001000 0x1000>;
+			xlnx,has-modem = <0x0>;
+		} ;
+		
+		ps7_fabric_irq_0: ps7_fabric_irq {
+			compatible = "ad-datacard";
+			interrupts = <0 29 4>;
+			interrupt-parent = <&ps7_scugic_0>;
+		} ;
+
+		/* Disabled Devices */
+
+		ps7_uart_0: serial@e0000000 { compatible = "invalid"; };
+        ps7_ram_0: ps7-ram@fffc0000 { compatible = "invalid"; };
+        ps7_dma_ns: ps7-dma@f8004000 { compatible = "invalid"; };
+		ps7_ethernet_1: ps7-ethernet@e000c000 { compatible = "invalid"; };
+        ps7_gpio_0: ps7-gpio@e000a000 { compatible = "invalid"; };
+        ps7_spi_0: ps7-spi@e0006000 { compatible = "invalid"; };
+        ps7_spi_1: ps7-spi@e0007000 { compatible = "invalid"; };
+		ps7_sd_1: ps7-sdio@e0101000 { compatible = "invalid"; };
+        ps7_ttc_1: ps7-ttc@f8002000 { compatible = "invalid"; };
+        ps7_i2c_0: ps7-i2c@e0004000 { compatible = "invalid"; };
+		ps7_i2c_1: ps7-i2c@e0005000 { compatible = "invalid"; };
+		ps7_can_0: ps7-can@e0008000 { compatible = "invalid"; };
+		ps7_can_1: ps7-can@e0009000 { compatible = "invalid"; };
+		ps7_usb_1: ps7-usb@e0003000 { compatible = "invalid"; };
+
+
+	} ;
+
+
+	
+} ;
+
+
